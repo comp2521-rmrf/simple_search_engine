@@ -85,11 +85,9 @@ int calculateInlinks(int num_urls, int** m, int v)
   int count=0, i;
   for(i = 0; i < num_urls; i++)
   {
-    if(v==i)
-    {
-    //  continue;
-    }
+    if(i!=v){
     count += m[i][v];
+    }
   }
   return count;
 }
@@ -98,32 +96,13 @@ int calculateOutlinks(int num_urls, int** m, int v)
   int count=0, i;
   for(i = 0; i < num_urls; i++)
   {
-    if(v==i|| m[i][v]==m[v][i])
+    if(i!=v)
     {
-    //  continue;
+      count += m[v][i];
     }
-    count += m[v][i];
-    
   }
   return count;
 }
-
-int calculateInlinksWithoutParallel(int num_urls, int** m, int v)
-{
-   int count=0, i;
-  for(i = 0; i < num_urls; i++)
-  {
-    if(v==i || m[i][v]==m[v][i])
-    {
-      continue;
-    }
-    count += m[i][v];
-  }
-  return count;
-}
-
-
-
 double calculateOutlinksNonZero(int num_urls, int** m, int v)
 {
   int outlinks=calculateOutlinks(num_urls,m,v);
@@ -141,7 +120,7 @@ double calculateWin(int num_urls, int** m, int v, int u)
   int i;
   for(i = 0; i < num_urls; i++)
   {
-    if (m[v][i] == 1)
+    if (m[v][i] == 1 && i!=v)
     {
       denom += calculateInlinks(num_urls, m, i);
     }
@@ -154,7 +133,7 @@ double calculateWout(int num_urls, int** m, int v, int u)
   int i;
   for(i = 0; i < num_urls; i++)
   {
-    if (m[v][i] == 1)
+    if (m[v][i] == 1 && i != v)
     {
       denom += calculateOutlinksNonZero(num_urls, m, i);
     }
@@ -186,7 +165,7 @@ double* calculatePagerank(int num_urls, int**m, double d, double diffPR, int max
       newPR[i] = 0;
       for(j=0;j<num_urls;j++)
       {
-        if(m[j][i]==1)
+        if(m[j][i]==1 && i !=j)
         {
           newPR[i] += oldPR[j]*calculateWin(num_urls,m,j,i)*calculateWout(num_urls,m,j,i);
         }
@@ -200,7 +179,7 @@ double* calculatePagerank(int num_urls, int**m, double d, double diffPR, int max
       diff += fabs(newPR[i]-oldPR[i]);
     }
   }
-   printf("iteration:%d\n",iteration);
+
   free(oldPR);
   return newPR;
 }
@@ -233,7 +212,7 @@ int main (int argc, char* argv[]) {
   int** m = createAdjMatrix(num_urls);
   fillAdjMatrix(urls, num_urls, m);
 
-  printMatrix(m,num_urls);
+  //printMatrix(m,num_urls);
 
   double d, diffPR;
   int maxIterations;
@@ -258,7 +237,7 @@ int main (int argc, char* argv[]) {
   FILE *f = fopen("pagerankList.txt", "w");
   for(i=0;i<num_urls;i++)
   {
-    fprintf(f, "%s, %d, %.7lf\n", pages[i].name, pages[i].outlinks, pages[i].pagerank);
+    fprintf(f, "%s, %d, %.8lf\n", pages[i].name, pages[i].outlinks, pages[i].pagerank);
   }
 
   return 0;
