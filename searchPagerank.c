@@ -31,11 +31,21 @@ int compare_by_page_rank(const void *url1,const void *url2);
 
 int main (int argc, char* argv[])
 {
+   int i,j=0;
    if(argc<2)
    {
       printf("Usage:./searchPagerank keyword1 keyword2...");
       return 0;
    }
+  // printf("haha\n");
+   for(i=1;i<argc;i++)
+   {
+      //printf("normalizing %s\n",argv[i]);
+      normalize(argv[i]);
+      //printf("argv[i] is now %s\n",argv[i]);
+   }
+   
+   
    int num_urls = numberOfUrlsInCollection();
    char left_urls[num_urls][URL_LENTH];
    int left_urls_size = num_urls;
@@ -51,11 +61,10 @@ int main (int argc, char* argv[])
    char keyline[MAX_CHARACTER_IN_A_LINE];
    char keyword[WORD_LENGTH];
    char tempword[MAX_CHARACTER_IN_A_LINE];
-   char s[2] = " ";
    char temp_url[100];
    int keyword_counter =1;
    FILE *index = fopen("invertedIndex.txt","r");
-   int i,j=0;
+   
    FILE* temp_file;
    //search for each keyword to generate a result_urls[]
    //printf("argc is %d\n",argc);
@@ -106,7 +115,7 @@ int main (int argc, char* argv[])
    
    struct node *url = malloc(num_urls * sizeof(node));
    //initialize the struct 
-   int seach_terms[num_urls];
+   //int seach_terms[num_urls];
    
    for(i =0 ;i< left_urls_size;i++ )
    {

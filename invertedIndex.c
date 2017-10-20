@@ -5,10 +5,14 @@
 #include <ctype.h>
 #define N_WORDS 10000
 #define WORD_LENGTH 100
+#define URL_LENTH 10
 
 void normalize(char *p);
 int is_in_the_array(char* tempwords,char array[][WORD_LENGTH], int word_counter);
 int myCompare(const void* a, const void* b);
+
+void readUrlsInCollection(int num_urls,char urls[][URL_LENTH]);
+
 
 int numberOfUrlsInCollection()
 {
@@ -22,24 +26,26 @@ int numberOfUrlsInCollection()
    fclose(f);
    return count;
 }
-char** readUrlsInCollection(int num_urls)
+void readUrlsInCollection(int num_urls, char urls[][URL_LENTH])
 {
-   char** urls = malloc(num_urls * sizeof(char*));
-   FILE *f = fopen("collection.txt","r");
-   char buf[1000];
-   int i = 0;
-   while(fscanf(f, "%s", buf)==1)
-   {
-       urls[i] = strdup(buf);
-       i++;
-   }
-   fclose(f);
-   return urls;
+  
+  FILE *f = fopen("collection.txt","r");
+  char buf[1000];
+  int i = 0;
+  while(fscanf(f, "%s", buf)==1)
+  {
+    strcpy(urls[i], buf);
+    i++;
+  }
+  fclose(f);
+
 }
 
 int main (int argc, char* argv[]) {
    int num_urls = numberOfUrlsInCollection();
-   char** urls = readUrlsInCollection(num_urls);
+   char urls[num_urls][URL_LENTH];
+
+   readUrlsInCollection(num_urls,urls);
    char filename[50];
    int url_counter =0;
    int words_counter = 0;
@@ -112,9 +118,10 @@ int main (int argc, char* argv[]) {
 
   //printf("words_counter is %d\n",words_counter);
   
+  FILE *output = fopen("invertedIndex.txt","w");
   for(int i=0;i<words_counter;i++)
   {
-      printf("%s",words[i]);
+      fprintf(output,"%s",words[i]);
       url_counter =0;
       while(url_counter < num_urls )
       {
@@ -147,7 +154,7 @@ int main (int argc, char* argv[]) {
                  
                  if(strcmp(words[i],tempwords)==0)
                  {
-                     printf(" %s",urls[url_counter]);
+                     fprintf(output," %s",urls[url_counter]);
                      break;
                  }
          
@@ -156,7 +163,7 @@ int main (int argc, char* argv[]) {
            fclose(fp_url);
        }
        
-       printf("\n");
+       fprintf(output,"\n");
    }
    return 0;
    
