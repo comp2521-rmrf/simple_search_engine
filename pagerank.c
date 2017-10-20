@@ -22,7 +22,8 @@ char** readUrlsInCollection(int num_urls)
   int i = 0;
   while(fscanf(f, "%s", buf)==1)
   {
-    urls[i] = strdup(buf);
+    strcpy(urls[i],buf);
+    
     i++;
   }
   fclose(f);
